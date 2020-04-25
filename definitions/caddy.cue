@@ -18,7 +18,7 @@ App :: {
 
 Config :: {
 	admin:    Admin
-	logging?: Log
+	logging:  Log
 	storage?: Storage
 	apps:     App
 }

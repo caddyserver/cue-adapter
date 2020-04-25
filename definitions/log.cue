@@ -29,7 +29,9 @@ IPMaskFilterEncoder :: {
 }
 FilterEncoderField :: DeleteFilterEncoder | IPMaskFilterEncoder
 
-keys: {
+KeyedEncoder :: {
+	format: "console" | *"json" | "logfmt"
+} & {
 	message_key?:     string
 	level_key?:       string
 	time_key?:        string
@@ -40,9 +42,6 @@ keys: {
 	time_format?:     string
 	duration_format?: string
 	level_format?:    string
-}
-KeyedEncoder :: keys & {
-	format: "console" | *"json" | "logfmt"
 }
 FilterEncoder :: {
 	format: "filter"
@@ -60,6 +59,7 @@ Log :: {
 	Logger :: {
 		writer:  LoggingWriter
 		encoder: LoggingEncoder
+		level: "DEBUG" | *"INFO" | "WARN" | "ERROR" | "PANIC" | "FATAL"
 		sampling?: {
 			interval?:   uint
 			first?:      uint
@@ -71,5 +71,21 @@ Log :: {
 	sink?: {
 		writer: LoggingWriter
 	}
-	logs: [string]: Logger
+	logMap :: [string]: Logger
+	logs: logMap & {
+		default: {
+			writer: {
+				output: "stderr"
+			}
+			encoder: {
+				format: "json"
+			}
+			level: "INFO"
+			sampling: {
+				interval: 1000000000 // 1 second
+				first: 100
+				thereafter: 100
+			}
+		}
+	}
 }
